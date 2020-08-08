@@ -1,0 +1,72 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Log in
+{% endblock %}
+
+{% block main %}
+    <form action="/log_in" method="POST" class="needs-validation text-white" novalidate id="form_username">
+        <div class="card col-md-6 col-lg-6 mx-auto p-0" id="username_div">
+            <div class="card-header text-center bg-dark">
+                <h5>Log In to RYM</h5>
+            </div>
+            <div class="card-body">
+                <div class="form-group text-center">
+                    <label for="answer" style="color: black;">Username/Roll Number</label><br>
+                    <input type="text" autocomplete="off" autofocus id="answer" name="answer" class="form-control" aria-describedby="username_help">
+                    <small id="username_help" style="color: black;">
+                        You can use your RYM username or your IIT-K username or Roll Number.
+                    </small>
+                    <div class="valid-feedback">
+                        Welcome back, <var id="username_var"></var>!
+                    </div>
+                    <div class="invalid-feedback">
+                        Ummm, couldn't find you. Make sure you entered the correct Username / Roll Number.
+                    </div>
+                </div>
+                <div>
+                    <button id="username.check" class="btn btn-block btn-primary">Continue</button>
+                </div>
+                <div class="text-center">
+                    <a href="/" class="btn btn-link">Forgotten password?</a><br>
+                </div>
+                <div class="form-inline">
+                    <hr align="left" width="43%"><span class="text-dark text-monospace">or</span><hr align="right" width="43%">
+                </div>
+                <div class="text-center">
+                    <a href="/register" class="btn btn-block btn-success">Register</a>
+                </div>
+            </div>
+            <div class="card-footer text-center text-dark">
+                Having issues? <a href="contact_us">Contact us!</a>
+            </div>
+        </div>
+    </form>
+
+    <script>
+        document.getElementById('form_username').addEventListener("submit", function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+            answer = document.getElementById('answer');
+            $.get('/login_check?answer=' + answer.value, function (data) {
+                if (data[0]) 
+                {
+                    if (data[1])
+                    {
+                        alert("Seems like you haven't registerd for RYM yet. No worries, we're redirecting you towards the registering page")
+                        post("/register", { username: data[2]})
+                    }
+                    else
+                    {
+                        document.getElementById('form_username').submit();
+                    }
+                }
+                else
+                {
+                    document.getElementById('username_help').style.display="none";
+                    answer.classList.add('is-invalid');
+                }
+            });
+        });
+    </script>
+{% endblock %}

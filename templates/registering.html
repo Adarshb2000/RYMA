@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Register
+{% endblock %}
+
+{% block main %}
+    <span class="text-white">
+    Seems like you haven't registered for RYM yet!
+    <br>
+    No Worries we're redirecting you to the register page.
+    <br>
+    Just enable java script and refrest the page.
+    </span>
+    <script>post("/register", { username: "{{ username }}"})</script>
+{% endblock %}

@@ -1,0 +1,19 @@
+db.execute("""CREATE TABLE 'y19_btech_bs' (
+                'id' integer PRIMARY KEY NOT NULL,
+                'name' varchar(64),
+                'username' varchar(16),
+                'email' varchar(32),
+                'rym_username' varchar(16),
+                'hash' TEXT,
+                'image_url_1' varchar(256),
+                'image_url_2' varchar(256),
+                'image_url_3' varchar(256),
+                'can_login' boolean
+                )""")
+
+db.execute("""CREATE TABLE 'award_i' (
+                's_no' integer AUTOINCREMENT NOT NULL,
+                'nom_id' integer PRIMARY KEY NOT NULL,
+                'nom_name' varchar(64),
+                'votes' integer
+                )""")

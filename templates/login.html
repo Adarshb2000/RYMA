@@ -1,0 +1,171 @@
+<html lang="en">
+    <head>    
+            <!-- documentation at http://getbootstrap.com/docs/4.1/, alternative themes at https://bootswatch.com/ -->
+            <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
+                
+            <!-- Icon for the webapp -->
+            <link rel="apple-touch-icon" sizes="180x180" href="/static/images/apple-touch-icon.png">
+            <link rel="icon" type="image/png" sizes="32x32" href="/static/images/favicon-32x32.png">
+            <link rel="icon" type="image/png" sizes="16x16" href="/static/images/favicon-16x16.png">
+            <link rel="manifest" href="/static/images/site.webmanifest">
+    
+            <title>RYM: Login</title>
+    
+            <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+            <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+            <script src="/static/script.js"></script>
+            
+        </head>
+    <body>
+        <nav class="navbar navbar-dark flex-md-nowrap shadow p-0" style="background-color: rgb(46, 112, 183);">
+            <a class="navbar-brand col-sm-3 col-md-2 mr-0 px-4" href="/"><strong>RYM Awards</strong> (Season 01)</a>
+        </nav>
+        <nav class="navbar navbar-dark p-0" style="background-color: rgb(102, 102, 102);">
+            <div class="mr-auto px-4">
+               <span class="text-white">System Name:</span>
+               <h1 id="navbar_roll" class="ml-auto" style="color: rgb(241, 229, 47);">{{ system_number }}</h1>
+               <span class="text-white" style="font-size: small;"><a href="/log_in">Click here</a> if the Name and Photograph</span><br>
+               <span class="text-white" style="font-size: small;">displayed on the screen is not yours</span>
+            </div>
+            <div class="navbar-nav px-2 align-top">
+                <span class="text-white ml-auto">Candidate Name :</span>
+                <h1 id="navbar_name" class="ml-auto" style="color: rgb(241, 229, 47);">{{ name }}</h1>
+                <div class="ml-auto">
+                    <span class="text-white">Season : </span>
+                    <strong style="color: rgb(241, 229, 47);">First</strong>
+                </div>
+            </div>
+            <div class="border border-light px-3 py-3 border border-secondary" style="background-color: white;">
+                <img src="{{ pic }}" class="rounded border border-dark" style="height: 120px; width: auto;">
+            </div>
+        </nav>
+        
+        <main class="container p-5">
+            <form action="/login" class="needs-validation" novalidate id="form_password" method="POST">
+                <div style="height: 250px;" class="card col-sm-6 mx-auto p-0" id="password_div">
+                    <div class="card-header text-left py-1" style="background-color: rgb(221, 221, 221);">
+                        <strong>Login</strong>
+                    </div>
+                    <div class="card-body" style="background-color: rgb(246, 246, 246);">
+                        <div class="form-inline d-flex justify-content-center">
+                            <img src="/static/images/username_pic.png" class="input-group-text">
+                            <input type="text" id="username" name="username" value="{{ username }}" class="form-control form-control-sm col-sm-10" style="background-color: rgb(234, 235, 229);" readonly>
+                        </div>
+                        <div class="form-inline d-flex justify-content-center">
+                            <img src="/static/images/lock.png" class="input-group-text">
+                            <input type="password" autocomplete="off" id="password" name="password" class="form-control form-control-sm col-sm-10" aria-describedby="password_help" autofocus><br>
+                            <br>
+                            <div class="invalid-feedback">
+                                Incorrect password. You have <var id="password_tries"></var> tries left.
+                            </div>
+                        </div>
+                        <div class="pt-5">
+                            <button class="btn btn-primary btn-block align-self-end">Sign In!</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            {% if not can_login %}
+            <form class="needs-validation" novalidate id="form_otp">
+                <div id="otp_div">
+                    <p>
+                        It seems like someone tried multiple times to log into your account.
+                    </p>
+                    <p>
+                        Worry not, we stopped him/her before they could do anything. Still, we highly recomend that you change your password after this.
+                    </p>
+                    <p>
+                        Just now we need you to confirm your identity. An OTP has been sent to your email, just verify it and you're good to go!
+                    </p>
+                    <div class="form-group">
+                        <label for="otp">Enter the OTP</label>
+                        <input type="text" class="form-control col-md-2 mb-2" autocomplete="off" name="otp" id="otp" placeholder="XXXX" autofocus required><br>
+                        <small id="otp_help">
+                            The desired otp has been sent to your IIT-K Email address. Make sure to check the junk folder.
+                        </small>
+                        <div class="invalid-feedback">
+                                Invalid OTP! You have <var id="otp_tries"></var> tries left.
+                        </div>
+                    </div>
+                    <div>
+                        <button class="btn btn-primarary" id="submit_button_2">Verify!</button>
+                    </div>
+                </div>
+            </form>
+            <script>
+                document.getElementById('otp').focus();
+                document.getElementById('password_div').style.display="none";
+                let y = 3;
+                document.getElementById('form_otp').addEventListener("submit", function(event) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    let otp = document.getElementById('otp');
+                    $.post("/otp_verification", { otp: otp.value }, function (data) {
+                        if (data)
+                        {
+                            $.post("/can_login", { value: 1 });
+                            document.getElementById('otp_div').style.display="none";
+                            document.getElementById('password_div').style.display="";
+                            document.getElementById('password').focus();
+                        }
+                        else
+                        {
+                            y -= 1;
+                            document.getElementById('otp_tries').innerText = String(y);
+                            document.getElementById('otp_help').style.display="none";
+                            otp.setCustomValidity('Invalid');
+                            document.getElementById('form_otp').classList.add('was-validated');
+                            if (y == 0)
+                            {
+                                setTimeout(() => {
+                                    window.location.replace("/log_in");    
+                                }, 100);
+                            }
+                        }
+                    });
+                });
+            </script>
+            {% endif %}
+            <p id="demo"></p>
+        </main>
+        <footer id="footer" style="position: absolute; bottom: 0; right: 0; left: 0; background-color: rgb(98, 123, 142);">
+            <div class="text-center">
+                <p class="text-white">Version 1.0.0.0</p>
+            </div>
+        </footer>
+    <script>        
+        let x = 3;
+        password = document.getElementById('password');
+        document.getElementById('form_password').addEventListener('submit', function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+            $.post("/password_verification",
+                    {
+                        username: document.getElementById('username').value,
+                        password: password.value
+                    }, function (data) {
+                        if (data)
+                        {
+                            document.getElementById('form_password').submit();
+                        }    
+                        else
+                        {
+                            x -= 1;
+                            document.getElementById('password_tries').innerHTML = String(x);
+                            password.classList.add('is-invalid');
+                            if (x == 0)
+                            {
+                                $.post("/can_login", { value: 0 });
+                                setTimeout(() => {
+                                    window.location.replace("/log_in");
+                                }, 100);
+                            }
+                        }
+                    });
+        });
+    </script>
+
+    </body>
+</html>

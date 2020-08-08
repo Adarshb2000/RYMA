@@ -1,0 +1,43 @@
+{% extends "layout.html" %}
+
+
+{% block title %}
+    Home
+{% endblock %}
+
+{% block main %}
+    <style>
+        .modal
+        {
+            background-image:  url(/static/images/einstein_background.jpg);
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-position: center;
+            background-size: cover;
+        }
+    </style>
+    <div class="modal" id="modal" style="background-color: rgb(14, 14, 14);">
+        <div class="card bg-dark text-center text-white" style="position: absolute; bottom: 0px; right: 0; left: 0;">
+            <div class="card-body">
+                <blockquote class="blockquote mb-0">
+                    <p>Everyone is a genius. But if you judge a fish by its ability to climb a tree, it will live its whole life believing that it is stupid.</p>
+                    <footer class="blockquote-footer">Albert Einstein</footer>
+                </blockquote>
+            </div>
+            <div class="text-right">
+                <button class="btn btn-outline-success">Let's go!</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        $("#modal").modal('show');
+
+        window.addEventListener('click', () => {
+            $("#modal").addClass('hidden')
+            setTimeout(() => {
+                window.location.href = "/home";
+            }, 240);
+        });
+    </script>
+{% endblock %}
